@@ -492,3 +492,17 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
 .topbar-ava { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 4px; }
 @media (max-width: 600px) { .footer-logo { height: 36px; } }
 .footer-tagline { margin-top: 2px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); opacity: .85; }
+
+/* ===== Header mobile: tombol tidak menimpa logo ===== */
+.btn-nav { white-space: nowrap; }
+@media (max-width: 640px) {
+  .brand { flex-shrink: 0; }
+  .sm-hide { display: none; }
+  .topbar-actions { min-width: 0; }
+}
+@media (max-width: 360px) {
+  .nav-ic { display: none; }
+  .brand .logo { height: 32px; }
+  .brand-name { font-size: 16px; }
+  .btn-nav { padding: 6px 9px; font-size: 12.5px; }
+}
