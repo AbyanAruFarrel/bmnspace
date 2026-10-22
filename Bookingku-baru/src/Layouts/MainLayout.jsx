@@ -102,8 +102,8 @@ export default function MainLayout({ title, children }) {
             </>
           ) : (
             <>
-              <Link to="/cek" className="btn-nav primary" style={{ textDecoration: "none" }}>🔎 Cek Pesanan</Link>
-              <button className="btn-nav" onClick={() => setAuth("login")} title="Khusus Helpdesk">Login Helpdesk</button>
+              <Link to="/cek" className="btn-nav primary" style={{ textDecoration: "none" }}><span className="nav-ic">🔎 </span>Cek Pesanan</Link>
+              <button className="btn-nav" onClick={() => setAuth("login")} title="Khusus Helpdesk">Login<span className="sm-hide"> Helpdesk</span></button>
             </>
           )}
         </div>
