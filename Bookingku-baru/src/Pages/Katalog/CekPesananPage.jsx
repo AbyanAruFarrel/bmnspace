@@ -45,7 +45,7 @@ export default function CekPesananPage() {
   };
 
   return (
-    <MainLayout title="Cek Pesanan">
+    <MainLayout>
       <main className="container">
         <Card>
           <form onSubmit={search}>
