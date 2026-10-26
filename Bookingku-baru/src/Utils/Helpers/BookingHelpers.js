@@ -1,6 +1,6 @@
 import { getRequests, updateRequest } from "./AuthHelpers";
 
-export const OPEN = "08:00";   // jam operasional
+export const OPEN = "07:30";   // jam operasional
 export const CLOSE = "22:00";
 // Peminjaman berhari-hari: tiap hari 07:30–17:00 (jam mulai otomatis 07:30, jam selesai maksimal 17:00)
 export const MULTI_START = "07:30";
