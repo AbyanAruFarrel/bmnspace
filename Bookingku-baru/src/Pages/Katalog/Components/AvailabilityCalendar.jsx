@@ -42,7 +42,7 @@ export default function AvailabilityCalendar({ room, onPick, selected }) {
       </div>
       <div className="cal-legend">
         <span className="legend warn">🟡 Kuning = Sebagian terpakai (masih ada jam/unit kosong)</span>
-        <span className="legend">🔴 Merah = Penuh (jam kerja 08:00–17:00)</span>
+        <span className="legend">🔴 Merah = Penuh (jam kerja 07:30–17:00)</span>
         <small className="muted">Permohonan yang menunggu persetujuan maupun yang disetujui menandai jadwal.</small>
       </div>
       {loadError && <p className="muted">Gagal memuat jadwal: {loadError}</p>}
