@@ -58,8 +58,8 @@ export default function AdminCalendar() {
 
   return (
     <>
-      <div className="filterbar" style={{ gridTemplateColumns: "1fr", marginBottom: 12 }}>
-        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+     <div className="filterbar" style={{ gridTemplateColumns: "1fr", marginBottom: 12 }}>
+        <select className="acal-select" value={asset} onChange={(e) => setAsset(e.target.value)}>
           <option value="">📅 Semua aset</option>
           {CATEGORIES.map((c) => <option key={c.id} value={`cat:${c.id}`}>{c.icon} Semua {c.name}</option>)}
           {CATEGORIES.map((c) => (
