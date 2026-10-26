@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../Layouts/MainLayout";
-import CategoryCards from "./Components/CategoryCards";
 import FilterBar from "./Components/FilterBar";
 import RoomCard from "./Components/RoomCard";
 import BookingModal from "./Components/BookingModal";
@@ -97,7 +96,6 @@ export default function KatalogPage() {
         {me && <span className="hero-hello"><span className="wave">👋</span> Halo, {displayName(me)}</span>}
         <h1>Pinjam <em>Ruangan, Barang<br />&amp; Mobil Kantor</em> dengan Mudah</h1>
         <p>Pilih ruangan, barang, atau mobil kantor, cek jadwalnya, lalu ajukan peminjaman. Tanpa login — cukup isi data diri Anda. Helpdesk akan menyetujuinya.</p>
-        <CategoryCards rooms={assets} active={f.cat} onSelect={(cat) => setF({ ...f, cat: f.cat === cat ? "" : cat })} />
       </section>
       <main className="container">
         <FilterBar f={f} setF={setF} />
