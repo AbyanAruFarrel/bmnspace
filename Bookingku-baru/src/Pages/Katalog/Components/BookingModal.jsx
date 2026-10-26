@@ -32,8 +32,8 @@ export default function BookingModal({ room, initial, onClose, onSubmit }) {
 
         <div className="field"><label>Jenis Peminjaman</label>
           <div className="tabs" style={{ margin: 0 }}>
-            <button type="button" className={`btn ${multi ? "secondary" : ""}`} onClick={() => setMode("single")}>Satu Hari</button>
-            <button type="button" className={`btn ${multi ? "" : "secondary"}`} onClick={() => setMode("multi")}>📆 Berhari-hari</button>
+            <button type="button" className={`btn ${multi ? "secondary" : ""}`} onClick={() => setMode("single")}>Jam</button>
+            <button type="button" className={`btn ${multi ? "" : "secondary"}`} onClick={() => setMode("multi")}>Hari</button>
           </div>
         </div>
         <div className="two">
