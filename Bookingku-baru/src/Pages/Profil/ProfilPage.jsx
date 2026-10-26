@@ -52,12 +52,12 @@ export default function ProfilPage() {
   ];
 
   return (
-    <MainLayout title="Dashboard Helpdesk">
+    <MainLayout>
       <main className="container">
         <div className="card profile-head">
           <div className="avatar-edit"><Avatar user={session} large /></div>
           <div>
-            <h2 style={{ margin: 0 }}>{displayName(session)}<span className="status done">Helpdesk</span></h2>
+            <h2 style={{ margin: 0 }}>{displayName(session)}<span className="status done">Admin</span></h2>
             <div className="muted">{session.email}</div>
           </div>
           <button type="button" className="btn danger logout-btn" onClick={logout}>⎋ Logout</button>
