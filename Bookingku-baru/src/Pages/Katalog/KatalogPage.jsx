@@ -95,7 +95,7 @@ export default function KatalogPage() {
       <section key={me ? "in" : "out"} className={`hero ${me ? "hero-animate" : ""}`}>
         {me && <span className="hero-hello"><span className="wave">👋</span> Halo, {displayName(me)}</span>}
         <h1>Pinjam <em>Ruangan, Barang<br />&amp; Mobil Kantor</em> dengan Mudah</h1>
-        <p>Pilih ruangan, barang, atau mobil kantor, cek jadwalnya, lalu ajukan peminjaman. Tanpa login — cukup isi data diri Anda. Helpdesk akan menyetujuinya.</p>
+        <p>Pilih ruangan, barang, atau mobil kantor, cek jadwalnya, lalu ajukan peminjaman. Tanpa login, cukup isi data diri Anda. Helpdesk akan menyetujuinya.</p>
       </section>
       <main className="container">
         <FilterBar f={f} setF={setF} />
