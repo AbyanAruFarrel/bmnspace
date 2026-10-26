@@ -1,3 +1,4 @@
+import AssetSelect from "../../../Components/AssetSelect";
 import { useCallback, useEffect, useState } from "react";
 import Card from "../../../Components/Card";
 import { getSession } from "../../../Utils/Helpers/AuthHelpers";
@@ -58,16 +59,11 @@ export default function AdminCalendar() {
 
   return (
     <>
-     <div className="filterbar" style={{ gridTemplateColumns: "1fr", marginBottom: 12 }}>
-        <select className="acal-select" value={asset} onChange={(e) => setAsset(e.target.value)}>
-          <option value="">📅 Semua aset</option>
-          {CATEGORIES.map((c) => <option key={c.id} value={`cat:${c.id}`}>{c.icon} Semua {c.name}</option>)}
-          {CATEGORIES.map((c) => (
-            <optgroup key={c.id} label={c.name}>
-              {assets.filter((r) => r.category === c.id).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-            </optgroup>
-          ))}
-        </select>
+      <div style={{ marginBottom: 12 }}>
+        <AssetSelect value={asset} onChange={setAsset} groups={[
+          { options: [{ value: "", label: "📅 Semua aset" }, ...CATEGORIES.map((c) => ({ value: `cat:${c.id}`, label: `${c.icon} Semua ${c.name}` }))] },
+          ...CATEGORIES.map((c) => ({ label: c.name, options: assets.filter((r) => r.category === c.id).map((r) => ({ value: r.id, label: r.name })) })).filter((g) => g.options.length),
+        ]} />
       </div>
       <div className="calendar">
         <div className="cal-head">
