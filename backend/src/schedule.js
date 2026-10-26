@@ -3,7 +3,7 @@
 // Berhari-hari   : hari pertama mulai 07:30, hari tengah 07:30-17:00,
 //                  hari terakhir 07:30 sampai jam selesai yang dipilih (maks. 17:00).
 export const OPEN = "07:30";
-export const CLOSE = "22:00";
+export const CLOSE = "17:00";
 export const MULTI_START = "07:30";
 export const MULTI_END = "17:00";
 export const MAX_DAYS = 366;
