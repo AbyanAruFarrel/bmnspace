@@ -77,7 +77,7 @@ export default function BookingModal({ room, initial, onClose, onSubmit }) {
         <div className="field"><label>{car ? "Tujuan / Keperluan Perjalanan" : "Keperluan / Agenda"}</label>
           <textarea name="agenda" rows="3" placeholder={car ? "Contoh: Kunjungan ke klien di Solo" : "Contoh: Workshop & Rapat Evaluasi Tim"}
             value={f.agenda} onChange={change} required /></div>
-        <p className="map-note">Permohonan peminjaman harus menunggu persetujuan Helpdesk. Pantau statusnya lewat menu “Cek Pesanan” memakai email dan No. Handphone yang Anda isi. Tidak perlu login.</p>
+        <p className="map-note">Permohonan peminjaman harus menunggu persetujuan Helpdesk. Pantau statusnya lewat menu “Cek Pesanan” memakai email dan No. Handphone yang Anda isi.</p>
         <div className="modal-actions">
           <button type="button" className="link-btn" onClick={onClose}>Batal</button>
           <button type="submit" className="btn">Ajukan Peminjaman</button>
