@@ -114,7 +114,7 @@ export default function MainLayout({ title, children }) {
       {children}
       <footer className="footer">
         <div className="footer-brand"><img className="footer-logo" src="/logo-mark.png" alt="" /> <span className="brand-name"><b>BMN</b>Space</span></div>
-        <div className="footer-tagline">Multi-Service Rental Platform</div>
+        <div className="footer-tagline">Platform Layanan Peminjaman BMN</div>
         <FooterLocation />
         <div className="footer-contacts">
           {footerContacts().map((c) => (
