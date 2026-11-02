@@ -34,7 +34,12 @@ export const needsCleanFlow = (r) => !isItem(r) && !isCar(r);
 
 // Daftar foto (mendukung data lama yang hanya punya satu `image`)
 export const roomImages = (r) => r.images || (r.image ? [r.image] : r.photo ? [r.photo] : []);
-export const fmtDateTime = (iso) => new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+// Tanggal + jam format 24 jam dengan titik dua, mis. "28 Okt 2026, 15:30"
+export const fmtTime24 = (d) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+export const fmtDateTime = (iso) => {
+  const d = new Date(iso);
+  return `${d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}, ${fmtTime24(d)}`;
+};
 export const rupiah = (n) => "Rp " + Number(n || 0).toLocaleString("id-ID");
 export const markCleaned = (id) =>
   updateRoom(id, { cleanedAt: new Date().toISOString(), needsCleaning: false, cleanNote: undefined, reportedBy: undefined, reportedAt: undefined });
