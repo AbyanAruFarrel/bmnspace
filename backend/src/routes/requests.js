@@ -2,8 +2,8 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { pool, query } from "../db.js";
 import { expireStale } from "../expire.js";
-import { CLOSE, MAX_DAYS, MULTI_END, MULTI_START, OPEN, hasClash } from "../schedule.js";
 import { kindOf } from "../categories.js";
+import { MAX_DAYS, hasClash, rulesFor } from "../schedule.js";
 
 const router = Router();
 const TZ = "Asia/Jakarta";
@@ -26,9 +26,13 @@ const normPhone = (p) => {
   const d = String(p || "").replace(/\D/g, "");
   return d.startsWith("62") ? "0" + d.slice(2) : d;
 };
-const creds = (b) => ({ email: text(b?.email, 150).toLowerCase(), phone: text(b?.phone, 30) });
-const owns = (row, email, phone) =>
-  row.requester_email.toLowerCase() === email && normPhone(row.requester_phone) === normPhone(phone);
+// NIP tanpa spasi. Panjang tidak dibatasi (hanya batas teknis 100 karakter di database).
+const normNip = (v) => String(v ?? "").replace(/\s/g, "");
+const NIP_MAX = 100;
+// Bukti kepemilikan pesanan tanpa login: NIP + No. Handphone
+const creds = (b) => ({ nip: normNip(text(b?.nip, NIP_MAX + 1)), phone: text(b?.phone, 30) });
+const owns = (row, nip, phone) =>
+  !!row.requester_nip && row.requester_nip === nip && normPhone(row.requester_phone) === normPhone(phone);
 
 const nowJakarta = () => {
   const [date, time] = new Date().toLocaleString("sv-SE", { timeZone: TZ }).split(" ");
@@ -42,7 +46,7 @@ router.post("/", limiter(60, 20), async (req, res) => {
   try {
     const assetId = Number(b.assetId);
     const name = text(b.name, 100);
-    const nip = text(b.nip, 40).replace(/\s/g, "");
+    const nip = normNip(text(b.nip, NIP_MAX + 1));
     const instansi = text(b.instansi, 150);
     const phone = text(b.phone, 30);
     const email = text(b.email, 150).toLowerCase();
@@ -52,7 +56,9 @@ router.post("/", limiter(60, 20), async (req, res) => {
 
     if (!Number.isInteger(assetId)) throw fail(400, "Aset tidak valid");
     if (!name || !instansi || !phone || !email || !agenda) throw fail(400, "Nama, satker, No. HP, email, dan keperluan wajib diisi");
-    if (!/^\d{8,25}$/.test(nip)) throw fail(400, "NIP wajib diisi (hanya angka, 8-25 digit)");
+    if (!nip) throw fail(400, "NIP wajib diisi");
+    if (!/^\d+$/.test(nip)) throw fail(400, "NIP hanya boleh berisi angka");
+    if (nip.length > NIP_MAX) throw fail(400, `NIP terlalu panjang (maksimal ${NIP_MAX} digit)`);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw fail(400, "Format email tidak valid");
     if (!/^[0-9+\-\s()]{8,20}$/.test(phone)) throw fail(400, "Format No. Handphone tidak valid");
     if (!isDate(startDate) || !isDate(endDate)) throw fail(400, "Tanggal tidak valid");
@@ -60,15 +66,23 @@ router.post("/", limiter(60, 20), async (req, res) => {
     if ((Date.parse(endDate) - Date.parse(startDate)) / 86400000 >= MAX_DAYS) throw fail(400, `Maksimal peminjaman ${MAX_DAYS} hari`);
     if (!isTime(endTime)) throw fail(400, "Jam selesai wajib diisi");
 
-    // Satu hari: jam mulai dipilih peminjam. Berhari-hari: jam mulai selalu 07:30.
+    // Jam yang berlaku tergantung jenis aset: barang 24 jam, ruangan & mobil jam kerja
+    const pre = (await pool.query("SELECT category FROM assets WHERE id = $1", [assetId])).rows[0];
+    if (!pre) throw fail(404, "Aset tidak ditemukan");
+    const R = rulesFor(await kindOf(pre.category));
+
     const multi = endDate > startDate;
-    const startTime = multi ? MULTI_START : b.startTime;
+    const startTime = multi && !R.continuous ? R.multiStart : b.startTime; // ruangan/mobil berhari-hari: mulai otomatis
     if (!isTime(startTime)) throw fail(400, "Jam mulai tidak valid");
-    if (multi) {
-      if (endTime <= MULTI_START || endTime > MULTI_END) throw fail(400, `Jam selesai hari terakhir harus antara ${MULTI_START} dan ${MULTI_END}`);
+    if (R.continuous) {
+      if (startTime >= R.close) throw fail(400, `Jam mulai harus sebelum ${R.close}`);
+      if (endTime > R.close) throw fail(400, `Jam selesai maksimal ${R.close}`);
+      if (!multi && endTime <= startTime) throw fail(400, "Jam selesai harus setelah jam mulai");
+    } else if (multi) {
+      if (endTime <= R.multiStart || endTime > R.multiEnd) throw fail(400, `Jam selesai hari terakhir harus antara ${R.multiStart} dan ${R.multiEnd}`);
     } else {
-      if (startTime < OPEN || startTime >= CLOSE) throw fail(400, `Jam mulai harus di jam operasional ${OPEN}-${CLOSE}`);
-      if (endTime > CLOSE) throw fail(400, `Jam selesai maksimal ${CLOSE}`);
+      if (startTime < R.open || startTime >= R.close) throw fail(400, `Jam mulai harus di jam operasional ${R.open}-${R.close}`);
+      if (endTime > R.close) throw fail(400, `Jam selesai maksimal ${R.close}`);
       if (endTime <= startTime) throw fail(400, "Jam selesai harus setelah jam mulai");
     }
     const now = nowJakarta();
@@ -85,7 +99,7 @@ router.post("/", limiter(60, 20), async (req, res) => {
     const asset = (await client.query("SELECT * FROM assets WHERE id = $1", [assetId])).rows[0];
     if (!asset) throw fail(404, "Aset tidak ditemukan");
 
-       const isItem = (await kindOf(asset.category, client)) === "barang";
+    const isItem = (await kindOf(asset.category, client)) === "barang";
     const capacity = isItem ? asset.stock || 1 : 1;
     const qty = isItem ? Number(b.qty) : 1;
     if (!Number.isInteger(qty) || qty < 1 || qty > capacity) throw fail(400, `Jumlah unit harus 1 sampai ${capacity}`);
@@ -96,7 +110,7 @@ router.post("/", limiter(60, 20), async (req, res) => {
       [assetId, startDate, endDate]
     );
     const nw = { start_date: startDate, end_date: endDate, start_time: startTime, end_time: endTime, qty };
-    if (hasClash(rows, nw, capacity)) throw fail(409, "Jadwal bentrok dengan peminjaman lain. Pilih tanggal atau jam yang berbeda.");
+    if (hasClash(rows, nw, capacity, R.continuous)) throw fail(409, "Jadwal bentrok dengan peminjaman lain. Pilih tanggal atau jam yang berbeda.");
 
     const ins = await client.query(
       `INSERT INTO requests (asset_id, asset_name, requester_name, requester_nip, requester_instansi, requester_phone,
@@ -149,25 +163,25 @@ router.get("/availability/:assetId", async (req, res) => {
   }
 });
 
-// ---------- Sisi peminjam (tanpa login: dibuktikan dengan email + No. HP) ----------
+// ---------- Sisi peminjam (tanpa login: dibuktikan dengan NIP + No. HP) ----------
 
-// POST /api/requests/lookup  { email, phone } -> daftar pesanan milik peminjam
+// POST /api/requests/lookup  { nip, phone } -> daftar pesanan milik peminjam
 router.post("/lookup", limiter(15, 20), async (req, res) => {
-  const { email, phone } = creds(req.body);
-  if (!email || !phone) return res.status(400).json({ error: "Email dan No. Handphone wajib diisi" });
+  const { nip, phone } = creds(req.body);
+  if (!nip || !phone) return res.status(400).json({ error: "NIP dan No. Handphone wajib diisi" });
   try {
     await expireStale();
     const r = await query(
       `SELECT id, asset_id, asset_name, requester_name, requester_nip, requester_instansi, requester_phone, agenda,
               start_date, end_date, start_time, end_time, qty, status, reject_reason, cancel_reason,
               decided_at, created_at
-       FROM requests WHERE lower(requester_email) = $1 ORDER BY id DESC LIMIT 200`,
-      [email]
+       FROM requests WHERE requester_nip = $1 ORDER BY id DESC LIMIT 200`,
+      [nip]
     );
     const mine = r.rows
       .filter((x) => normPhone(x.requester_phone) === normPhone(phone))
       .map(({ requester_phone, ...rest }) => rest);
-    if (!mine.length) return res.status(404).json({ error: "Pesanan tidak ditemukan. Periksa email dan No. Handphone." });
+    if (!mine.length) return res.status(404).json({ error: "Pesanan tidak ditemukan. Periksa NIP dan No. Handphone." });
     res.json(mine);
   } catch (err) {
     console.error(err);
@@ -178,13 +192,13 @@ router.post("/lookup", limiter(15, 20), async (req, res) => {
 // Mengubah status pesanan milik peminjam secara atomik, lalu memberi tahu helpdesk.
 const guestAction = (from, to, notifText) => async (req, res) => {
   const id = Number(req.params.id);
-  const { email, phone } = creds(req.body);
-  if (!Number.isInteger(id) || !email || !phone) return res.status(400).json({ error: "Data tidak lengkap" });
+  const { nip, phone } = creds(req.body);
+  if (!Number.isInteger(id) || !nip || !phone) return res.status(400).json({ error: "Data tidak lengkap" });
   const reason = text(req.body?.reason, 300) || "Dibatalkan oleh peminjam";
   try {
     await expireStale();
     const cur = (await query("SELECT * FROM requests WHERE id = $1", [id])).rows[0];
-    if (!cur || !owns(cur, email, phone)) return res.status(404).json({ error: "Pesanan tidak ditemukan" });
+    if (!cur || !owns(cur, nip, phone)) return res.status(404).json({ error: "Pesanan tidak ditemukan" });
 
     const r = to === "Dibatalkan"
       ? await query(
