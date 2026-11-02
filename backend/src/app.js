@@ -5,9 +5,11 @@ import assetsRouter from "./routes/assets.js";
 import requestsRouter from "./routes/requests.js";
 import authRouter from "./routes/auth.js";
 import adminAssetsRouter from "./routes/adminAssets.js";
+import adminReportRouter from "./routes/adminReport.js";
 import adminRouter from "./routes/admin.js";
 import notificationsRouter from "./routes/notifications.js";
 import settingsRouter from "./routes/settings.js";
+import cronRouter from "./routes/cron.js";
 
 // Aplikasi Express saja (tanpa app.listen) supaya bisa dipakai lokal (server.js) maupun di Vercel (api/index.js).
 const app = express();
@@ -28,8 +30,10 @@ app.use("/api/assets", assetsRouter);
 app.use("/api/requests", requestsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/admin/assets", adminAssetsRouter); // harus sebelum /api/admin
+app.use("/api/admin/report", adminReportRouter); // harus sebelum /api/admin
 app.use("/api/admin", adminRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/settings", settingsRouter);
+app.use("/api/cron", cronRouter);
 
 export default app;
