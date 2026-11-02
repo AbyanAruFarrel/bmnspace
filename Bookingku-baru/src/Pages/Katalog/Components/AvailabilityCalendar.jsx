@@ -16,9 +16,9 @@ export default function AvailabilityCalendar({ room, onPick, selected }) {
     const t = new Date();
     const from = localIso(t);
     const to = localIso(new Date(t.getFullYear(), t.getMonth() + MAX_AHEAD + 1, 0));
-    setBusy(roomId, [], isItem(room));
+    setBusy(roomId, [], true);
     api(`/requests/availability/${roomId}?from=${from}&to=${to}`)
-      .then((list) => { if (alive) { setBusy(roomId, list, isItem(room)); setLoadError(""); setTick((n) => n + 1); } })
+      .then((list) => { if (alive) { setBusy(roomId, list, true); setLoadError(""); setTick((n) => n + 1); } })
       .catch((e) => { if (alive) setLoadError(e.message); });
     return () => { alive = false; };
   }, [roomId]);
@@ -42,7 +42,7 @@ export default function AvailabilityCalendar({ room, onPick, selected }) {
       </div>
       <div className="cal-legend">
         <span className="legend warn">🟡 Kuning = Sebagian terpakai (masih ada jam/unit kosong)</span>
-        <span className="legend">{isItem(room) ? "🔴 Merah = Penuh seharian (24 jam)" : "🔴 Merah = Penuh (jam kerja 07:30–17:00)"}</span>
+        <span className="legend">🔴 Merah = Penuh seharian (24 jam)</span>
         <small className="muted">Permohonan yang menunggu persetujuan maupun yang disetujui menandai jadwal.</small>
       </div>
       {loadError && <p className="muted">Gagal memuat jadwal: {loadError}</p>}
