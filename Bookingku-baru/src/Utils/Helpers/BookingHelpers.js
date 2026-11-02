@@ -12,10 +12,8 @@ export const ITEM_CLOSE = "23:59";
 // Aturan jam per jenis aset. continuous = true untuk barang (24 jam).
 //   ruangan/mobil: satu hari OPEN-CLOSE; berhari-hari mulai 07:30, hari terakhir sampai maks. 17:00
 //   barang       : jam mulai & selesai bebas 00:00-23:59, hari tengah dipakai penuh
-export const rulesFor = (continuous) =>
-  continuous
-    ? { continuous: true, open: ITEM_OPEN, close: ITEM_CLOSE, multiStart: null, multiEnd: ITEM_CLOSE }
-    : { continuous: false, open: OPEN, close: CLOSE, multiStart: MULTI_START, multiEnd: MULTI_END };
+// Semua kategori (ruangan, barang, mobil) bisa dipinjam 24 jam; argumen diabaikan.
+export const rulesFor = (_continuous) => ({ continuous: true, open: ITEM_OPEN, close: ITEM_CLOSE, multiStart: null, multiEnd: ITEM_CLOSE });
 
 // "Menunggu" (belum diputuskan admin) dan "Disetujui" sama-sama mengunci jadwal.
 // Ditolak, Dibatalkan, dan Selesai tidak menghalangi peminjam lain.
