@@ -497,11 +497,11 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
 .btn-nav { white-space: nowrap; }
 @media (max-width: 640px) {
   .brand { flex-shrink: 0; }
-  .sm-hide { display: none; }
+  .sm-hide { display: none; }          /* "Login Helpdesk" -> "Login" */
   .topbar-actions { min-width: 0; }
 }
 @media (max-width: 360px) {
-  .nav-ic { display: none; }
+  .nav-ic { display: none; }           /* sembunyikan ikon kaca pembesar */
   .brand .logo { height: 32px; }
   .brand-name { font-size: 16px; }
   .btn-nav { padding: 6px 9px; font-size: 12.5px; }
@@ -511,9 +511,6 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
 .room-card { display: flex; flex-direction: column; }
 .room-body { flex: 1; display: flex; flex-direction: column; }
 .room-body .tags { margin-top: auto; padding-top: 12px; }
-
-/* ===== Kalender admin: kolom pilih aset tidak selebar halaman ===== */
-.filterbar select.acal-select { width: 100%; max-width: 340px; justify-self: start; }
 
 /* ===== Pilihan kustom (AssetSelect): selalu terbuka ke bawah ===== */
 .asel { position: relative; width: 100%; max-width: 380px; }
@@ -528,3 +525,18 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
 .asel-opt.indent { padding-left: 22px; }
 .asel-opt:hover, .asel-opt:focus-visible { background: #f1f5ff; outline: none; }
 .asel-opt.on { background: #e8f0fe; color: #1e3a8a; font-weight: 600; }
+
+/* ===== Langkah 9h: input jam 24 jam & laporan pemakaian ===== */
+.t24 { display: inline-flex; align-items: center; gap: 6px; }
+.t24 select { width: auto; min-width: 72px; }
+.report-filter { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; align-items: end; }
+.report-modal { max-width: 860px; width: 100%; }
+.report-title { text-align: center; margin-bottom: 12px; }
+.report-group { margin-bottom: 14px; }
+.report-group h4 { margin: 0 0 6px; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.report-table th, .report-table td { border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; vertical-align: top; }
+.report-table th:first-child, .report-table td:first-child { width: 40px; text-align: center; }
+.report-table thead { background: #e2e8f0; }
+.report-foot { font-size: 12px; margin-top: 8px; }
+@media print { .report-modal { font-size: 12px; } .report-group { break-inside: avoid; } .report-table thead { display: table-header-group; } }
