@@ -54,7 +54,7 @@ export default function ProfilPage() {
   ];
 
   return (
-    <MainLayout title="Dashboard Helpdesk">
+    <MainLayout>
       <main className="container">
         <div className="card profile-head">
           <div className="avatar-edit"><Avatar user={session} large /></div>
