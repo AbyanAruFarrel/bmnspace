@@ -61,8 +61,8 @@ try {
   cek("Batal dengan NIP salah -> 404", (await post(`/requests/${s1.data.id}/cancel`, { nip: "999", phone: HP })).status, 404);
   cek("Batal dengan NIP + HP benar -> 200", (await post(`/requests/${s1.data.id}/cancel`, { nip: NIP, phone: HP })).status, 200);
 
-  // --- ruangan/mobil tetap jam kerja ---
-  cek("Mobil jam 18:00 tetap ditolak -> 400", (await kendaraan({ startDate: D1, endDate: D1, startTime: "18:00", endTime: "19:00" })).status, 400);
+  // --- semua kategori 24 jam ---
+  cek("Mobil jam 18:00-19:00 sekarang boleh -> 201", (await kendaraan({ startDate: D1, endDate: D1, startTime: "18:00", endTime: "19:00" })).status, 201);
 
   // --- barang 24 jam ---
   const D2 = tanggal(105), D3 = tanggal(106), D4 = tanggal(107);

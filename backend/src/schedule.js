@@ -15,10 +15,9 @@ export const ITEM_CLOSE = "23:59";
 export const MAX_DAYS = 366;
 
 // kind: "ruang" | "barang" | "mobil"
-export const rulesFor = (kind) =>
-  kind === "barang"
-    ? { continuous: true, open: ITEM_OPEN, close: ITEM_CLOSE, multiStart: null, multiEnd: ITEM_CLOSE }
-    : { continuous: false, open: OPEN, close: CLOSE, multiStart: MULTI_START, multiEnd: MULTI_END };
+// SEMUA kategori (ruangan, barang, mobil) bisa dipinjam 24 jam. Untuk kembali ke jam kerja bagi ruangan/mobil,
+// pakai versi: kind === "barang" ? {...24 jam} : {...jam kerja}.
+export const rulesFor = (_kind) => ({ continuous: true, open: ITEM_OPEN, close: ITEM_CLOSE, multiStart: null, multiEnd: ITEM_CLOSE });
 
 const toMin = (t) => { const [h, m] = String(t).slice(0, 5).split(":").map(Number); return h * 60 + m; };
 const day = (s) => String(s).slice(0, 10);
