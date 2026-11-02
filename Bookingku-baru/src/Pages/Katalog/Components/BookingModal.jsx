@@ -61,11 +61,11 @@ export default function BookingModal({ room, initial, onClose, onSubmit }) {
         {!multi && (f.startDate || today) === today && <p className="muted" style={{ marginTop: 0 }}>Hari ini jam mulai paling awal {minStart} (tidak bisa meminjam waktu yang sudah lewat).</p>}
         <p className="muted" style={{ marginTop: 0 }}>
           {R.continuous
-            ? `Barang bisa dipinjam kapan saja, 24 jam (${R.open}–${R.close}), termasuk berhari-hari. Pilih jam ambil dan jam kembali.`
+            ? `Barang bisa dipinjam kapan saja, 24 jam (${R.open}–${R.close}), termasuk perhari. Pilih jam ambil dan jam kembali.`
             : multi
               ? `Peminjaman berhari-hari: jam mulai otomatis ${R.multiStart}, dipakai tiap hari ${R.multiStart}–${R.multiEnd}. Pilih sampai hari apa dan jam berapa (maks. ${R.multiEnd}) di hari terakhir.`
               : `Jam selesai wajib diisi (jam operasional ${R.open}–${R.close}).`}
-          {" "}.
+          {" "}
         </p>
 
         <h3 style={{ margin: "14px 0 6px" }}>Data Pemesan</h3>
