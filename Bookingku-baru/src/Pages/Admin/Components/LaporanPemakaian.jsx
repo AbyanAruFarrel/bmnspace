@@ -91,7 +91,7 @@ export default function LaporanPemakaian() {
               <div className="report-group" key={gi}>
                 <h4>{gi + 1}. {g.name} <span className="muted">({getCategory(g.category).name})</span></h4>
                 <table className="report-table">
-                  <thead><tr><th>No</th><th>Tanggal Pemakaian</th><th>Unit Peminjam</th><th>Keperluan</th></tr></thead>
+                  <thead><tr><th>No</th><th>Tanggal Pemakaian</th><th>Peminjam</th><th>Keperluan</th></tr></thead>
                   <tbody>
                     {g.items.map((r, i) => (
                       <tr key={r.id}>
