@@ -65,7 +65,7 @@ export default function BookingModal({ room, initial, onClose, onSubmit }) {
             : multi
               ? `Peminjaman berhari-hari: jam mulai otomatis ${R.multiStart}, dipakai tiap hari ${R.multiStart}–${R.multiEnd}. Pilih sampai hari apa dan jam berapa (maks. ${R.multiEnd}) di hari terakhir.`
               : `Jam selesai wajib diisi (jam operasional ${R.open}–${R.close}).`}
-          {" "}Jam memakai format 24 jam. Peminjaman otomatis berstatus selesai setelah lewat tanggal & jam selesai.
+          {" "}.
         </p>
 
         <h3 style={{ margin: "14px 0 6px" }}>Data Pemesan</h3>
