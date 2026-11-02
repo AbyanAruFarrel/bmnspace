@@ -22,7 +22,7 @@ export default function LoanFormModal({ req, asset, onClose }) {
     ["Lokasi", locationText(asset)],
     ["Jumlah", isItem(asset) ? `${req.qty || 1} unit` : isCar(asset) ? "1 unit kendaraan" : "1 ruangan"],
     ["Tanggal pinjam", `${fmtDate(req.startDate)}${req.endDate !== req.startDate ? ` s/d ${fmtDate(req.endDate)}` : ""}`],
-    ["Jam", `${timeText(req)} (${rentLabel(req)})`],
+    ["Jam", `${timeText(req, isItem(asset))} (${rentLabel(req)})`],
     ["Waktu selesai", req.endTime ? `${fmtDate(req.endDate)}, ${req.endTime}` : ""],
     [isCar(asset) ? "Tujuan perjalanan" : "Keperluan", req.agenda],
   ];

@@ -4,6 +4,7 @@ import MainLayout from "../../Layouts/MainLayout";
 import Button from "../../Components/Button";
 import Avatar from "../../Components/Avatar";
 import RequestList from "../Admin/Components/RequestList";
+import LaporanPemakaian from "../Admin/Components/LaporanPemakaian";
 import AdminCalendar from "../Admin/Components/AdminCalendar";
 import RoomManager from "../Admin/Components/RoomManager";
 import NotifList from "./Components/NotifList";
@@ -47,17 +48,18 @@ export default function ProfilPage() {
     ["dashboard", <>Dashboard Helpdesk{pill(badge.waiting)}</>],
     ["kalender", "Kalender"],
     ["aset", "Kelola Aset"],
+    ["laporan", "Laporan"],
     ["notif", <>Notifikasi{pill(badge.unread)}</>],
     ["password", "Ubah Password"],
   ];
 
   return (
-    <MainLayout>
+    <MainLayout title="Dashboard Helpdesk">
       <main className="container">
         <div className="card profile-head">
           <div className="avatar-edit"><Avatar user={session} large /></div>
           <div>
-            <h2 style={{ margin: 0 }}>{displayName(session)}<span className="status done">Admin</span></h2>
+            <h2 style={{ margin: 0 }}>{displayName(session)}<span className="status done">Helpdesk</span></h2>
             <div className="muted">{session.email}</div>
           </div>
           <button type="button" className="btn danger logout-btn" onClick={logout}>⎋ Logout</button>
@@ -72,6 +74,7 @@ export default function ProfilPage() {
         {tab === "dashboard" && <RequestList />}
         {tab === "kalender" && <AdminCalendar />}
         {tab === "aset" && <RoomManager />}
+        {tab === "laporan" && <LaporanPemakaian />}
         {tab === "notif" && <NotifList onRead={refreshBadge} />}
         {tab === "password" && <ChangePasswordForm />}
       </main>

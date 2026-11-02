@@ -6,10 +6,10 @@ import { getGuest } from "../../Utils/Helpers/GuestHelpers";
 import { toastError } from "../../Utils/Helpers/ToastHelpers";
 import { api, mapRequest } from "../../Utils/Helpers/api";
 
-// Pemesan tamu memantau pesanannya: email DAN No. Handphone harus sama dengan yang diisi saat memesan.
+// Pemesan tamu memantau pesanannya: NIP DAN No. Handphone harus sama dengan yang diisi saat memesan.
 export default function CekPesananPage() {
   const g = getGuest();
-  const [f, setF] = useState({ email: g.email || "", phone: g.phone || "" });
+  const [f, setF] = useState({ nip: g.nip || "", phone: g.phone || "" });
   const [found, setFound] = useState(null); // { creds, name, rows } (rows = data mentah dari server)
   const [tick, setTick] = useState(0);
   useEffect(() => { const id = setInterval(() => setTick((t) => t + 1), 30000); return () => clearInterval(id); }, []);
@@ -30,7 +30,7 @@ export default function CekPesananPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await load({ email: f.email.trim(), phone: f.phone.trim() });
+      await load({ nip: f.nip.replace(/\s/g, ""), phone: f.phone.trim() });
     } catch (err) {
       setFound(null);
       toastError(err.message);
@@ -45,15 +45,15 @@ export default function CekPesananPage() {
   };
 
   return (
-    <MainLayout>
+    <MainLayout title="Cek Pesanan">
       <main className="container">
         <Card>
           <form onSubmit={search}>
             <h2 style={{ marginTop: 0 }}>Cek Status Pesanan</h2>
-            <p className="muted" style={{ marginTop: -8 }}>Masukkan email dan No. Handphone yang Anda isi saat memesan.</p>
+            <p className="muted" style={{ marginTop: -8 }}>Masukkan NIP dan No. Handphone yang Anda isi saat memesan.</p>
             <div className="two">
-              <div className="field"><label>Email</label>
-                <input type="email" name="email" value={f.email} onChange={change} required /></div>
+              <div className="field"><label>NIP</label>
+                <input name="nip" inputMode="numeric" autoComplete="off" value={f.nip} onChange={change} required /></div>
               <div className="field"><label>No. Handphone</label>
                 <input type="tel" name="phone" inputMode="tel" value={f.phone} onChange={change} required /></div>
             </div>

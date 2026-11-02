@@ -6,7 +6,7 @@ import BookingModal from "./Components/BookingModal";
 import { CAPACITY_FILTERS } from "../../Data/Dummy";
 import { displayName, getSession } from "../../Utils/Helpers/AuthHelpers";
 import { isItem, stockOf } from "../../Utils/Helpers/RoomHelpers";
-import { CLOSE, isPastBooking, MULTI_END, MULTI_START, OPEN } from "../../Utils/Helpers/BookingHelpers";
+import { isPastBooking, rulesFor } from "../../Utils/Helpers/BookingHelpers";
 import { api } from "../../Utils/Helpers/api";
 import { confirmDialog } from "../../Utils/Helpers/SwalHelpers";
 import { toastError, toastSuccess } from "../../Utils/Helpers/ToastHelpers";
@@ -49,16 +49,22 @@ export default function KatalogPage() {
   // Pengecekan jadwal bentrok dilakukan server (hasil akhirnya yang berlaku).
   const submit = async (d) => {
     if (d.endDate < d.startDate) return toastError("Tanggal selesai tidak boleh sebelum tanggal mulai");
-    if (d.mode === "multi") { // berhari-hari: mulai otomatis 07:30, selesai maksimal 17:00
+    const R = rulesFor(isItem(room)); // barang: 24 jam; ruangan/mobil: jam kerja
+    if (d.mode === "multi") {
       if (d.endDate <= d.startDate) return toastError("Pilih tanggal selesai setelah tanggal mulai untuk peminjaman berhari-hari");
-      if (!d.endTime || d.endTime <= MULTI_START || d.endTime > MULTI_END) return toastError(`Jam selesai hari terakhir harus antara ${MULTI_START} dan ${MULTI_END}`);
+      if (R.continuous) { // barang: jam ambil dan jam kembali bebas (24 jam)
+        if (!d.startTime) return toastError("Jam ambil wajib diisi");
+        if (!d.endTime || d.endTime > R.close) return toastError(`Jam kembali hari terakhir maksimal ${R.close}`);
+      } else { // ruangan/mobil: mulai otomatis 07:30, selesai maksimal 17:00
+        if (!d.endTime || d.endTime <= R.multiStart || d.endTime > R.multiEnd) return toastError(`Jam selesai hari terakhir harus antara ${R.multiStart} dan ${R.multiEnd}`);
+      }
     } else {
-      if (d.startTime < OPEN || d.startTime >= CLOSE) return toastError(`Jam mulai harus di jam operasional ${OPEN}–${CLOSE}`);
-      if (!d.endTime || d.endTime <= OPEN || d.endTime > CLOSE) return toastError(`Jam selesai harus di jam operasional ${OPEN}–${CLOSE}`);
+      if (!d.startTime || d.startTime < R.open || d.startTime >= R.close) return toastError(`Jam mulai harus di jam operasional ${R.open}–${R.close}`);
+      if (!d.endTime || d.endTime <= R.open || d.endTime > R.close) return toastError(`Jam selesai harus di jam operasional ${R.open}–${R.close}`);
       if (d.endTime <= d.startTime) return toastError("Jam selesai harus setelah jam mulai");
     }
     if (!d.name) return toastError("Nama lengkap wajib diisi");
-    if (!/^\d{8,25}$/.test(d.nip.replace(/\s/g, ""))) return toastError("NIP wajib diisi (hanya angka)");
+    if (!/^\d+$/.test(d.nip.replace(/\s/g, ""))) return toastError("NIP wajib diisi (hanya angka)");
     if (!d.instansi) return toastError("Satker wajib diisi");
     if (!d.phone) return toastError("No. handphone wajib diisi");
     if (!/^\S+@\S+\.\S+$/.test(d.email)) return toastError("Email tidak valid");
@@ -84,7 +90,7 @@ export default function KatalogPage() {
       setRoom(null);
       toastSuccess("Permohonan terkirim. Menunggu persetujuan.");
       Swal.fire({ icon: "success", title: "Permohonan terkirim", confirmButtonText: "OK",
-        html: `Kode pesanan: <b>${orderCode(req)}</b><br/>Pantau statusnya lewat menu <b>Cek Pesanan</b> memakai email dan No. Handphone Anda.` });
+        html: `Kode pesanan: <b>${orderCode(req)}</b><br/>Pantau statusnya lewat menu <b>Cek Pesanan</b> memakai NIP dan No. Handphone Anda.` });
     } catch (err) {
       toastError(err.message); // mis. jadwal bentrok dari server
     }
@@ -95,7 +101,7 @@ export default function KatalogPage() {
       <section key={me ? "in" : "out"} className={`hero ${me ? "hero-animate" : ""}`}>
         {me && <span className="hero-hello"><span className="wave">👋</span> Halo, {displayName(me)}</span>}
         <h1>Pinjam <em>Ruangan, Barang<br />&amp; Mobil Kantor</em> dengan Mudah</h1>
-        <p>Pilih ruangan, barang, atau mobil kantor, cek jadwalnya, lalu ajukan peminjaman. Tanpa login, cukup isi data diri Anda. Helpdesk akan menyetujuinya.</p>
+        <p>Pilih ruangan, barang, atau mobil kantor, cek jadwalnya, lalu ajukan peminjaman. Tanpa login — cukup isi data diri Anda. Helpdesk akan menyetujuinya.</p>
       </section>
       <main className="container">
         <FilterBar f={f} setF={setF} />

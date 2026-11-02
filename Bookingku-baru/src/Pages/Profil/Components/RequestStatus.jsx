@@ -15,7 +15,7 @@ const STATUS = [
 ];
 
 // Daftar pesanan milik peminjam (tanpa login).
-// requests: hasil Cek Pesanan (sudah dipetakan); assets: daftar aset; creds: { email, phone } untuk
+// requests: hasil Cek Pesanan (sudah dipetakan); assets: daftar aset; creds: { nip, phone } untuk
 // membuktikan kepemilikan; onChanged: memuat ulang daftar setelah ada perubahan.
 // Alur: ajukan -> menunggu persetujuan Helpdesk -> disetujui -> selesai (otomatis setelah waktu selesai, atau ditandai Helpdesk)
 export default function RequestStatus({ requests, assets, creds, onChanged }) {
@@ -64,7 +64,7 @@ export default function RequestStatus({ requests, assets, creds, onChanged }) {
                 <strong>{r.roomName}</strong>
                 <span className={`status ${STATUS_CLS[r.status]}`}>{statusLabel(r)}</span>
                 <div className="muted">Kode pesanan: {orderCode(r)}</div>
-                <div className="muted">{rentLabel(r)} • {fmtDate(r.startDate)} s/d {fmtDate(r.endDate)} • {timeText(r)}{isItem(asset) && ` • ${r.qty || 1} unit`}</div>
+                <div className="muted">{rentLabel(r)} • {fmtDate(r.startDate)} s/d {fmtDate(r.endDate)} • {timeText(r, isItem(asset))}{isItem(asset) && ` • ${r.qty || 1} unit`}</div>
                 <div className="muted">Keperluan: {r.agenda}</div>
                 {r.status === "Menunggu" && <div className="muted">⏳ Menunggu persetujuan Helpdesk.</div>}
                 {r.status === "Disetujui" && <div className="muted">Disetujui Helpdesk{r.decidedAt && ` • ${fmtDateTime(r.decidedAt)}`}. Silakan gunakan sesuai jadwal.</div>}

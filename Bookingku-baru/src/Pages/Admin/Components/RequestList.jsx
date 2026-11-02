@@ -120,7 +120,7 @@ export default function RequestList() {
                   <div className="muted">Kontak: {r.phone && <a href={waUrl(r.phone)} target="_blank" rel="noopener noreferrer">📞 {r.phone}</a>}
                     {r.phone && r.email && " • "}{r.email && <a href={`mailto:${r.email}`}>✉️ {r.email}</a>}</div>
                 )}
-                <div className="muted">{rentLabel(r)} • {fmtDate(r.startDate)} s/d {fmtDate(r.endDate)} • {timeText(r)}{isItem(asset) && ` • ${r.qty || 1} unit`}</div>
+                <div className="muted">{rentLabel(r)} • {fmtDate(r.startDate)} s/d {fmtDate(r.endDate)} • {timeText(r, isItem(asset))}{isItem(asset) && ` • ${r.qty || 1} unit`}</div>
                 <div className="muted">Keperluan: {r.agenda}</div>
                 {r.decidedByName && <div className="muted">Diputuskan oleh {r.decidedByName}</div>}
                 {r.status === "Ditolak" && r.reason && <div className="muted">Alasan ditolak: {r.reason}</div>}

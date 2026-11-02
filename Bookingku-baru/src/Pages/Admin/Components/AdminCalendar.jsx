@@ -110,7 +110,7 @@ export default function AdminCalendar() {
             <div>
               <strong>{r.roomName}</strong>
               <span className={`status ${STATUS_CLS[r.status]}`}>{statusLabel(r)}</span>
-              <div className="muted">👤 {r.name}{r.instansi && ` (${r.instansi})`} • 🕒 {timeText(r)}{isItem(assetOf(r)) && ` • ${r.qty || 1} unit`}</div>
+              <div className="muted">👤 {r.name}{r.instansi && ` (${r.instansi})`} • 🕒 {timeText(r, isItem(assetOf(r)))}{isItem(assetOf(r)) && ` • ${r.qty || 1} unit`}</div>
               <div className="muted">{fmtDate(r.startDate)}{r.endDate !== r.startDate && ` s/d ${fmtDate(r.endDate)}`} • Keperluan: {r.agenda}</div>
             </div>
           </div>
